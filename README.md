@@ -1,37 +1,44 @@
 <div align="center">
 
-# Sorting Algorithms Benchmark in Python
+# Sorting Algorithms Benchmark
 
-An experimental benchmark comparing the execution time of **Bucket Sort**, **Merge Sort**, and **Bubble Sort** across multiple input sizes and repeated randomized trials.
+A multi-language experimental benchmark of **Bucket Sort**, **Merge Sort**, and **Bubble Sort**, with Python as the current reference implementation and historical C/Java implementations preserved for comparison.
 
 <p>
-  <img src="https://img.shields.io/badge/Python-3.x-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Python-Reference-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Java-Historical-ED8B00?style=flat-square&logo=openjdk&logoColor=white" alt="Java"/>
+  <img src="https://img.shields.io/badge/C-Historical-A8B9CC?style=flat-square&logo=c&logoColor=black" alt="C"/>
   <img src="https://img.shields.io/badge/Study-Experimental%20Benchmark-00BFBF?style=flat-square" alt="Experimental Benchmark"/>
-  <img src="https://img.shields.io/badge/Algorithms-Sorting-181717?style=flat-square" alt="Sorting Algorithms"/>
-  <img src="https://img.shields.io/badge/Statistics-Mean%20%7C%20Std%20%7C%20Min%20%7C%20Max-181717?style=flat-square" alt="Descriptive Statistics"/>
 </p>
 
 </div>
 
----
-
 ## Overview
 
-This repository contains a small empirical performance study of three sorting algorithms implemented in Python:
+This repository consolidates three implementations that were previously split across separate repositories. The **Python version is the canonical, currently documented experiment**. The C and Java sources are retained under `implementations/` as historical variants for cross-language analysis and future methodological alignment.
 
-- **Bucket Sort**;
-- **Merge Sort**;
-- **Bubble Sort**.
+The experiment studies three sorting approaches:
 
-The experiment measures execution time across increasing input sizes, repeats each configuration multiple times, and summarizes the observed runtime using descriptive statistics.
+- Bucket Sort;
+- Merge Sort;
+- Bubble Sort.
 
-The goal is not to produce a definitive language- or hardware-independent ranking, but to provide a compact and reproducible example of **algorithm benchmarking and experimental performance analysis**.
+## Repository Structure
 
----
+```text
+sorting-algorithms-benchmark/
+├── Artigo.py
+├── implementations/
+│   ├── c/
+│   │   └── Artigo.c
+│   └── java/
+│       └── Artigo.java
+└── README.md
+```
 
-## Experimental Design
+## Canonical Python Experiment
 
-The benchmark evaluates the following input sizes:
+The Python benchmark evaluates:
 
 ```text
 10
@@ -41,232 +48,99 @@ The benchmark evaluates the following input sizes:
 100,000 elements
 ```
 
-For each size, the experiment performs:
+Each size is executed **10 times**. For every repetition, one random base vector is created and copied for all three algorithms, reducing input-instance differences within that trial.
 
-```text
-10 independent executions
-```
-
-Each execution generates a new base vector containing random floating-point values uniformly sampled between:
-
-```text
-0 and 1000
-```
-
-The same base vector from a given execution is supplied to all three algorithms through a copy, reducing input-instance differences within that repetition.
-
----
-
-## Experimental Workflow
+Random floating-point values are generated between `0` and `1000`.
 
 ```mermaid
 flowchart LR
-    Size[Select Input Size] --> Generate[Generate Random Base Vector]
-    Generate --> Copy1[Copy for Bucket Sort]
-    Generate --> Copy2[Copy for Merge Sort]
-    Generate --> Copy3[Copy for Bubble Sort]
-    Copy1 --> B[Bucket Sort]
-    Copy2 --> M[Merge Sort]
-    Copy3 --> BB[Bubble Sort]
-    B --> Time[Record Runtime]
+    Size[Input Size] --> Data[Random Base Vector]
+    Data --> B[Bucket Sort Copy]
+    Data --> M[Merge Sort Copy]
+    Data --> BB[Bubble Sort Copy]
+    B --> Time[Runtime Measurement]
     M --> Time
     BB --> Time
-    Time --> Repeat[Repeat 10 Times]
+    Time --> Repeat[10 Repetitions]
     Repeat --> Stats[Mean · Std Dev · Min · Max]
 ```
 
----
+## Python Timing & Statistics
 
-## Implemented Algorithms
-
-### Bucket Sort
-
-The implementation:
-
-1. finds the minimum and maximum input values;
-2. creates one bucket per input element;
-3. maps values into buckets;
-4. sorts each bucket using Python's built-in `sorted()`;
-5. concatenates the buckets into the final result.
-
-Because the implementation delegates the internal ordering of each bucket to Python's built-in sorting routine, its measured behavior reflects both the bucket-distribution strategy and the cost of sorting individual buckets.
-
-### Merge Sort
-
-A recursive divide-and-conquer implementation that:
-
-1. splits the input into left and right halves;
-2. recursively sorts both halves;
-3. merges the sorted partitions back into the original array.
-
-### Bubble Sort
-
-A standard iterative Bubble Sort implementation with an early-exit optimization: if a complete pass performs no swaps, execution stops before all nominal passes are completed.
-
----
-
-## Timing Method
-
-Execution time is measured with:
-
-```python
-time.time()
-```
-
-The elapsed interval is converted to milliseconds:
-
-```text
-(end - start) × 1000
-```
-
-Each algorithm receives a copy of the base input vector so that in-place modifications do not affect the following algorithms.
-
----
-
-## Reported Statistics
-
-For every algorithm and input size, the script prints the individual runtimes for all 10 executions and then calculates:
+The Python implementation measures elapsed time using `time.time()` and reports milliseconds. For every algorithm/input-size combination it calculates:
 
 | Metric | Meaning |
 |---|---|
 | Mean | Average observed runtime |
-| Standard deviation | Runtime dispersion across executions |
-| Minimum | Fastest observed execution |
-| Maximum | Slowest observed execution |
+| Standard deviation | Dispersion across repetitions |
+| Minimum | Fastest observed run |
+| Maximum | Slowest observed run |
 
-The calculations use Python's `statistics` module.
+The terminal tables use the `tabulate` package.
 
----
-
-## Repository Structure
-
-```text
-Artigo_Ordena-o_Python/
-├── Artigo.py     # Algorithms, benchmark execution, and statistics
-└── README.md     # Experiment documentation
-```
-
----
-
-## Requirements
-
-The script uses Python's standard library plus `tabulate` for formatted terminal tables.
-
-Install the dependency with:
+## Running the Python Benchmark
 
 ```bash
+git clone https://github.com/Dyogo199/sorting-algorithms-benchmark.git
+cd sorting-algorithms-benchmark
 pip install tabulate
-```
-
----
-
-## Running the Benchmark
-
-Clone the repository:
-
-```bash
-git clone https://github.com/Dyogo199/Artigo_Ordena-o_Python.git
-cd Artigo_Ordena-o_Python
-```
-
-Run:
-
-```bash
 python Artigo.py
 ```
 
-Depending on the machine, the `100,000`-element Bubble Sort experiment can take substantially longer than the other configurations because of its quadratic runtime characteristics.
+The `100,000`-element Bubble Sort configuration can take substantially longer because of its quadratic behavior.
 
----
+## Consolidated Implementations
 
-## Output
+### Java
 
-For each input size, the program produces two terminal tables.
+`implementations/java/Artigo.java` contains the historical Java benchmark. It uses `System.nanoTime()`, 10 executions, the same three algorithms, and input sizes of `100`, `1,000`, `10,000`, and `100,000`.
 
-### Individual executions
+The Java and Python experiment definitions are therefore **similar but not identical**, so raw runtime values should not be presented as a controlled cross-language comparison without harmonizing the protocols first.
 
-```text
-Execution | Bucket Sort (ms) | Merge Sort (ms) | Bubble Sort (ms)
+### C
+
+`implementations/c/Artigo.c` preserves the original C source exactly. It includes the same algorithmic theme and descriptive statistics, but the historical code uses non-standard block/lambda-like syntax when adapting `merge_sort` to the timing function:
+
+```c
+^(double *a, int n){ merge_sort(a, 0, n - 1); }
 ```
 
-### Statistical summary
-
-```text
-Algorithm | Mean (ms) | Standard Deviation | Minimum (ms) | Maximum (ms)
-```
-
-The repository currently does not version benchmark result files, so measured values depend on the runtime environment and each random execution.
-
----
+That construct is not standard portable C. The preserved C source should therefore be treated as a **historical experimental implementation that requires correction before a standard C build**.
 
 ## Methodological Considerations
 
-This benchmark is useful for comparing algorithm behavior, but several factors should be considered when interpreting the results.
+The current repository is useful as an empirical-programming study, but a rigorous cross-language benchmark still requires protocol normalization.
 
-### Runtime measurement
+Key threats to validity include:
 
-`time.time()` is adequate for a simple experiment, but a more rigorous benchmark should use a high-resolution monotonic timer such as:
-
-```python
-time.perf_counter()
-```
-
-### Randomness
-
-The script does not currently define a fixed random seed. As a result, repeated full executions of the program use different input sequences.
-
-### Execution order
-
-Algorithms are always executed in this order:
-
-```text
-Bucket Sort → Merge Sort → Bubble Sort
-```
-
-A more rigorous experiment could randomize or rotate the execution order to reduce systematic ordering effects.
-
-### System noise
-
-Background processes, CPU frequency scaling, thermal conditions, interpreter behavior, and operating-system scheduling can influence runtime measurements.
-
-### Bucket Sort implementation
-
-The Bucket Sort implementation uses Python's built-in `sorted()` for each bucket, so the benchmark should not be interpreted as measuring a completely standalone primitive bucket-sorting implementation.
-
----
+- different input-size sets between implementations;
+- different timers (`time.time`, `System.nanoTime`, `clock`);
+- no fixed random seed in the canonical experiment;
+- fixed algorithm execution order;
+- interpreter/JVM/native-runtime differences;
+- system noise, CPU scaling and thermal effects;
+- language-specific Bucket Sort implementations;
+- the historical C build issue described above.
 
 ## Reproducibility Roadmap
 
-The most valuable next improvements would be:
+1. define one shared set of input sizes and repetitions;
+2. use reproducible seeds and export identical datasets for all languages;
+3. validate identical sorted outputs before timing;
+4. use appropriate high-resolution monotonic timers;
+5. separate warm-up from measurement where required, especially for the JVM;
+6. randomize or rotate algorithm execution order;
+7. export raw measurements to CSV;
+8. record CPU, OS, compiler/interpreter/JVM versions and flags;
+9. repair the C timing wrapper without altering the preserved historical source;
+10. place corrected implementations in a separate `benchmark/` tree;
+11. add automated correctness tests;
+12. generate plots and confidence intervals;
+13. add CI to compile/test all supported implementations.
 
-1. replace `time.time()` with `time.perf_counter()`;
-2. add command-line parameters for input sizes and repetition count;
-3. support a configurable random seed;
-4. randomize algorithm execution order;
-5. validate that every algorithm produces the same sorted output;
-6. export raw measurements to CSV;
-7. record Python version, operating system, CPU, and memory information;
-8. generate plots with confidence intervals or distribution visualizations;
-9. add automated tests for algorithm correctness;
-10. add a requirements file or project configuration;
-11. version representative benchmark results;
-12. separate algorithm implementations from the experimental runner.
+## Consolidation Note
 
----
-
-## Experimental Value
-
-This project demonstrates several concepts useful beyond sorting algorithms:
-
-- controlled comparison of alternative implementations;
-- repeated measurements rather than single-run timing;
-- descriptive statistical analysis;
-- fairness through reuse of the same input instance within each trial;
-- explicit discussion of threats to validity and reproducibility.
-
-These practices are fundamental to empirical software and performance engineering studies.
-
----
+The former standalone C and Java repositories can now be archived because their source has been preserved here. Keeping one canonical repository makes the experiment easier to discover, reproduce and evolve.
 
 ## Author
 
