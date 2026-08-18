@@ -95,6 +95,8 @@ The `100,000`-element Bubble Sort configuration can take substantially longer be
 
 `implementations/java/Artigo.java` contains the historical Java benchmark. It uses `System.nanoTime()`, 10 executions, the same three algorithms, and input sizes of `100`, `1,000`, `10,000`, and `100,000`.
 
+The historical file declares `public class SortBenchmark` while the preserved filename is `Artigo.java`. Standard `javac` therefore requires the file to be renamed to `SortBenchmark.java` (or the public-class declaration to be changed) before compilation. The preserved source is intentionally left unchanged.
+
 The Java and Python experiment definitions are therefore **similar but not identical**, so raw runtime values should not be presented as a controlled cross-language comparison without harmonizing the protocols first.
 
 ### C
@@ -120,6 +122,7 @@ Key threats to validity include:
 - interpreter/JVM/native-runtime differences;
 - system noise, CPU scaling and thermal effects;
 - language-specific Bucket Sort implementations;
+- the historical Java filename/public-class mismatch;
 - the historical C build issue described above.
 
 ## Reproducibility Roadmap
@@ -133,10 +136,11 @@ Key threats to validity include:
 7. export raw measurements to CSV;
 8. record CPU, OS, compiler/interpreter/JVM versions and flags;
 9. repair the C timing wrapper without altering the preserved historical source;
-10. place corrected implementations in a separate `benchmark/` tree;
-11. add automated correctness tests;
-12. generate plots and confidence intervals;
-13. add CI to compile/test all supported implementations.
+10. create a corrected Java build target with a matching source filename;
+11. place corrected implementations in a separate `benchmark/` tree;
+12. add automated correctness tests;
+13. generate plots and confidence intervals;
+14. add CI to compile/test all supported implementations.
 
 ## Consolidation Note
 
